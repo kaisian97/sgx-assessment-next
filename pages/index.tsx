@@ -85,9 +85,14 @@ export default function Home() {
                 },
               }}
             />
-            <FormTextArea name="description" label="Description" />
+            <FormTextArea name="description" label="Description" isRequired />
             <FormUploadDropZone name="images" label="Images" />
-            <Button colorScheme="teal" type="submit" isLoading={isSubmitting}>
+            <Button
+              colorScheme="teal"
+              type="submit"
+              isLoading={isSubmitting}
+              disabled={!formMethods.formState.isValid}
+            >
               Submit
             </Button>
           </VStack>
