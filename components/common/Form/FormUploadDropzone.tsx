@@ -6,6 +6,7 @@ import { DeleteIcon } from '@chakra-ui/icons'
 import { IMAGE_MIME_TYPES, VIDEO_MIME_TYPES } from 'constant'
 import FormControl from './FormControl'
 import IconButton from '../IconButton'
+import { toBase64 } from 'utils'
 
 type Props = {
   name: string
@@ -21,6 +22,7 @@ type UploadedFile = {
   url: string
   name: string
   type: string
+  base64: string
 }
 
 const FormUploadDropZone = ({
@@ -42,14 +44,16 @@ const FormUploadDropZone = ({
 
   async function handleAcceptedFiles(files: any[]) {
     if (!files.length) return
-    const newFiles = files.map((file) => {
+    const unsettledFiles = files.map(async (file) => {
       return {
         path: file.path,
         url: URL.createObjectURL(file),
         name: file.name,
         type: file.type,
+        base64: await toBase64(file),
       }
     })
+    const newFiles = await Promise.all(unsettledFiles)
     field.onChange([...field.value, ...newFiles])
   }
 

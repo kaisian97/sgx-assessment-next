@@ -1,28 +1,61 @@
 import Head from 'next/head'
+import { useState } from 'react'
 import { Box, HStack, VStack } from '@chakra-ui/react'
 import { FormProvider, useForm } from 'react-hook-form'
+
 import {
   FormInput,
   Button,
   FormTextArea,
   FormUploadDropZone,
+  Toast,
 } from 'components/common'
+import { SimpleFormValues } from './api/sendEmail'
 
 export default function Home() {
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
   const formDefaultValues = {
     firstName: '',
     lastName: '',
     email: '',
     description: '',
+    images: [],
   }
 
-  const formMethods = useForm<typeof formDefaultValues>({
+  const formMethods = useForm<SimpleFormValues>({
     mode: 'onChange',
     defaultValues: formDefaultValues,
   })
 
-  const handleSubmit = formMethods.handleSubmit((values) => {
-    console.log({ values })
+  const handleSubmit = formMethods.handleSubmit(async (values) => {
+    setIsSubmitting(true)
+
+    const res = await fetch('/api/sendEmail', {
+      body: JSON.stringify({
+        values,
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+    })
+    const result = await res.json()
+
+    setIsSubmitting(false)
+
+    if (result.success) {
+      Toast.success({
+        title: 'Email Sent',
+        description: `An email has been sent to ${values.email}`,
+      })
+      formMethods.reset()
+    } else {
+      Toast.error({
+        title: 'Email Fail to Send',
+        description: 'Sorry for the inconvenience',
+      })
+    }
   })
 
   return (
@@ -54,7 +87,9 @@ export default function Home() {
             />
             <FormTextArea name="description" label="Description" />
             <FormUploadDropZone name="images" label="Images" />
-            <Button type="submit">Submit</Button>
+            <Button colorScheme="teal" type="submit" isLoading={isSubmitting}>
+              Submit
+            </Button>
           </VStack>
         </form>
       </FormProvider>
