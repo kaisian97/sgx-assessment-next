@@ -4,3 +4,4 @@ export { default as FormUploadDropZone } from './Form/FormUploadDropzone'
 
 export { default as IconButton } from './IconButton'
 export { default as Button } from './Button'
+export { default as Toast } from './Toast'
