@@ -4,7 +4,7 @@ import { useResponsiveSize } from 'hooks'
 type Props = {}
 
 const Button = ({ size, children, ...restProps }: Props & ButtonProps) => {
-  const defaultSize = useResponsiveSize()
+  const defaultSize = useResponsiveSize({ minSm: true })
   return (
     <CButton size={size || defaultSize} {...restProps}>
       {children}
